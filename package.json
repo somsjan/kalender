@@ -2,27 +2,18 @@
   "name": "kalender",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "test": "SET \"NODE_ENV=test\" &&mocha ",
-    "test-watch": "nodemon --exec npm test"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/somsjan/kalender.git"
+  },
+  "author": "Jan v/d Molen",
   "license": "ISC",
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.17.2",
-    "express": "^4.15.3",
-    "express-handlebars": "^3.0.0",
-    "express-session": "^1.15.3",
-    "express-validator": "^3.2.0",
-    "mongoose": "^4.10.4",
-    "passport": "^0.3.2",
-    "passport-local": "^1.0.0"
+  "bugs": {
+    "url": "https://github.com/somsjan/kalender/issues"
   },
-  "devDependencies": {
-    "expect": "^1.20.2",
-    "mocha": "^3.3.0",
-    "supertest": "^3.0.0"
-  }
+  "homepage": "https://github.com/somsjan/kalender#readme"
 }
