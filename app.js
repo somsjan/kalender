@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
 
 const routes = require('./routes/routes');
 
@@ -10,6 +11,7 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/kalender');
 
 app.use(bodyParser.json());
+app.use(expressValidator());
 routes(app);
 
 app.use((err, req, res, next) => {
