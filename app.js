@@ -8,7 +8,11 @@ const routes = require('./routes/routes');
 const app = express();
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/kalender');
+if(process.env.NODE_ENV == undefined){
+    console.log('running NORMAL DB');
+    mongoose.connect('mongodb://localhost/kalender');
+}
+
 
 app.use(bodyParser.json());
 app.use(expressValidator());

@@ -4,9 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "mocha --recursive",
-    "test-watch": "nodemon --exec mocha --recursive",
-    "test-watch-min": "nodemon --exec mocha --recursive -R min"
+    "test": "set NODE_ENV=test && mocha --recursive",
+    "test-watch": "set NODE_ENV=test && nodemon --exec mocha --recursive",
+    "test-watch-min": "set NODE_ENV=test && nodemon --exec mocha --recursive -R min"
   },
   "repository": {
     "type": "git",

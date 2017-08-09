@@ -6,13 +6,6 @@ const User = require('./../models/user');
 
 const app = require('../app');
 
-beforeEach((done) => {
-    const testUser = new User({email: "test@test.nl", password: "wachtwoord"});
-    User.remove({}).then(() => {
-         testUser.save().then(() => done());
-    });
-});
-
 describe('GET /api/user', () => {
     it('should return list of users', (done) => {
         request(app)
@@ -26,7 +19,7 @@ describe('GET /api/user', () => {
 
 describe('GET /api/user/:ID', () => {
     it('should return an existing user', (done) => {
-        const testUser = new User({email: "test01@test.nl", password: "wachtwoord"});
+        const testUser = new User({email: "test@test.nl", password: "wachtwoord"});
         testUser.save().then(() => {
             request(app)
                 .get('/api/user/' + testUser._id)
@@ -59,7 +52,7 @@ describe('POST /api/user, register a new user', () => {
             });
     });
     it('deny duplicate email adresses', (done) => {
-        const testUser = new User({email: "test@test.nl", password: "jezus"});
+        const testUser = new User({email: "test01@test.nl", password: "jezus"});
         request(app)
             .post('/api/user')
             .send( testUser )
@@ -119,7 +112,7 @@ describe('PUT /api/user/ID', () => {
                             done();
                         });
                 });
-        });
+        }).catch((e) => console.log(e));
     });
 });
 

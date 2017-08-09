@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const EventSchema = require('./event');
+
 const UserSchema = new Schema({
     email: {
         type: String,
@@ -10,8 +12,9 @@ const UserSchema = new Schema({
     password: {
         type: String,
         required: true
-    }
-})
+    },
+    events: [EventSchema]
+});
 
 const User = mongoose.model('user', UserSchema);
 
