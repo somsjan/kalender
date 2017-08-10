@@ -15,7 +15,19 @@ module.exports = (app) => {
         }).catch(next);
     });
 
-    app.post('/api/user', (req, res, next) => {
+    app.post('/api/login', (req, res, next) => {
+        const email = req.body.email
+        const password = req.body.email
+        User.findOne({ email }).then((user) => {
+            bcrypt.compare(req.body.password, user.password, (err, result) => {
+                if (err)    next(err);
+                else if(result) res.json(user);
+                else if(!result) res.status(401).json('login credentials are invalid');
+            });
+        }).catch(next);
+    });
+
+    app.post('/api/register', (req, res, next) => {
         req.assert('email', 'valid email required').isEmail();
         req.getValidationResult().then((result) => {
             if(result.isEmpty()){

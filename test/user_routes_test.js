@@ -40,11 +40,35 @@ describe('GET /api/user/:ID', () => {
     });
 });
 
-describe('POST /api/user, register a new user', () => {
+describe('POST /api/login, login a user', () => {
+    it.only('should login user', (done) => {
+        const testUser = new User({
+            email: "test@test.nl",
+            password: "$2a$10$F8Ukp2dwzJKvXwWa0CLRp.1kn4x/cy4Rrwo2RxTp94A4j8eyL1HFa"
+        });
+        //password === "tester"
+
+        testUser.save().then(() => {
+            request(app)
+                .post('/api/login')
+                .send({
+                    email: "test@test.nl",
+                    password: "tester"
+                })
+                .end((err, res) => {
+                    assert(res.status == 200);
+                    assert(res.body.email === "test@test.nl");
+                    done();
+                });
+        });
+    });
+});
+
+describe('POST /api/register, register a new user', () => {
     it('should register a new user', (done) => {
         const testUser = new User({email: "test@gmail.com", password: "jezus"});
         request(app)
-            .post('/api/user')
+            .post('/api/register')
             .send( testUser )
             .end((err, res) => {
                 User.findById(testUser._id)
@@ -54,7 +78,7 @@ describe('POST /api/user, register a new user', () => {
     it('deny duplicate email adresses', (done) => {
         const testUser = new User({email: "test01@test.nl", password: "jezus"});
         request(app)
-            .post('/api/user')
+            .post('/api/register')
             .send( testUser )
             .end((err, res) => {
                 assert(res.status === 422);
@@ -65,7 +89,7 @@ describe('POST /api/user, register a new user', () => {
     it('deny faulty email', (done) => {
         const testUser = new User({email: "1212", password: "jezus"});
         request(app)
-            .post('/api/user')
+            .post('/api/register')
             .send( testUser )
             .end((err, res) => {
                 assert(res.status === 422);
@@ -76,7 +100,7 @@ describe('POST /api/user, register a new user', () => {
     it('deny missing email', (done) => {
         const testUser = new User({email: undefined, password: "jezus"});
         request(app)
-            .post('/api/user')
+            .post('/api/register')
             .send( testUser )
             .end((err, res) => {
                 assert(res.status === 422);
@@ -87,7 +111,7 @@ describe('POST /api/user, register a new user', () => {
     it('deny missing password', (done) => {
         const testUser = new User({email: "email@test.nl", password: undefined});
         request(app)
-            .post('/api/user')
+            .post('/api/register')
             .send( testUser )
             .end((err, res) => {
                 assert(res.status === 422);
