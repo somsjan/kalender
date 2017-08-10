@@ -18,7 +18,7 @@ describe('GET /api/user', () => {
 });
 
 describe('GET /api/user/:ID', () => {
-    it('should return an existing user', (done) => {
+    xit('should return an existing user', (done) => {
         const testUser = new User({email: "test@test.nl", password: "wachtwoord"});
         testUser.save().then(() => {
             request(app)
@@ -30,7 +30,7 @@ describe('GET /api/user/:ID', () => {
                 });
         });
     });
-    it('should NOT return a user', (done) => {
+    xit('should NOT return a user', (done) => {
         request(app)
             .get('/api/user/' + 1122)
             .end((err, res) => {
@@ -41,7 +41,7 @@ describe('GET /api/user/:ID', () => {
 });
 
 describe('POST /api/login, login a user', () => {
-    it.only('should login user', (done) => {
+    it('should login user', (done) => {
         const testUser = new User({
             email: "test@test.nl",
             password: "$2a$10$F8Ukp2dwzJKvXwWa0CLRp.1kn4x/cy4Rrwo2RxTp94A4j8eyL1HFa"

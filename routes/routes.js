@@ -1,6 +1,8 @@
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
+const session = require('express-session');
 
 const User = require('./../models/user');
+
 
 module.exports = (app) => {
     app.get('/api/user', (req, res, next) => {
@@ -10,25 +12,35 @@ module.exports = (app) => {
     });
 
     app.get('/api/user/:id', (req, res, next) => {
-        User.findById(req.params.id).then((user) => {
-            res.json(user);
-        }).catch(next);
+        if(!req.session.user){
+            return res.status(401).send('Need to be logged in')
+        }
+        if (req.session.user._id === req.params.id) {
+            User.findById(req.params.id).then((user) => {
+                return res.json(user);
+            }).catch(next);
+        } else {
+            res.status(401).send('not authorized')
+        }
+
     });
 
     app.post('/api/login', (req, res, next) => {
-        const email = req.body.email
-        const password = req.body.email
-        User.findOne({ email }).then((user) => {
+        User.findOne({ email: req.body.email }).then((user) => {
             bcrypt.compare(req.body.password, user.password, (err, result) => {
-                if (err)    next(err);
-                else if(result) res.json(user);
-                else if(!result) res.status(401).json('login credentials are invalid');
+                if(result) {
+                    req.session.user = user;
+                    res.json(user);
+                }
+                else if(!result) res.status(401).send('password is incorrect');
+                else if (err)    next(err);
             });
-        }).catch(next);
+        }).catch((e) => res.status(401).send(`No user was found with email: ${req.body.email}` ));
     });
 
     app.post('/api/register', (req, res, next) => {
         req.assert('email', 'valid email required').isEmail();
+        req.assert('password', 'valid password required').isNotEmpty();
         req.getValidationResult().then((result) => {
             if(result.isEmpty()){
                 bcrypt.genSalt(10, function(err, salt) {
