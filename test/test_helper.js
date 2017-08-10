@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const bcrypt = require('bcryptjs');
+
 const User = require('./../models/user');
 
 before((done) => {
@@ -15,6 +17,7 @@ before((done) => {
 });
 
 beforeEach((done) => {
+
     const testUser01 = new User({
         email: "test01@test.nl",
         password: "wachtwoord",
@@ -32,6 +35,11 @@ beforeEach((done) => {
     });
 
     User.remove({}).then(() => {
-         testUser01.save().then(() => done());
+        bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.hash(testUser01.password, salt, function(err, hash) {
+                testUser01.password = hash;
+                testUser01.save().then(() => done());
+            });
+        });
     });
 });

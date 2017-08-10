@@ -1,5 +1,6 @@
+var bcrypt = require('bcryptjs');
+
 const User = require('./../models/user');
-// const Events = require('./../models/event');
 
 module.exports = (app) => {
     app.get('/api/user', (req, res, next) => {
@@ -15,14 +16,18 @@ module.exports = (app) => {
     });
 
     app.post('/api/user', (req, res, next) => {
-        const newUser = new User(req.body);
-
         req.assert('email', 'valid email required').isEmail();
         req.getValidationResult().then((result) => {
             if(result.isEmpty()){
-                newUser.save()
-                    .then((user) => res.json(user))
-                    .catch(next);
+                bcrypt.genSalt(10, function(err, salt) {
+                    bcrypt.hash(req.body.password, salt, function(err, hash) {
+                        req.body.password = hash;
+                        const newUser = new User(req.body);
+                        newUser.save()
+                            .then((user) => res.json(user))
+                            .catch(next);
+                    });
+                });
             } else {
                 res.status(422).send(result.array());
             }
