@@ -1,14 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const expressValidator = require('express-validator');
-const session = require('express-session');
 
-const routes = require('./routes/routes');
+const user_route = require('./routes/user_route');
+const event_route = require('./routes/event_route');
+const comment_route = require('./routes/comment_route');
 
 const app = express();
-
-process.env.SECRET_KEY = "le_secret_0505";
 
 mongoose.Promise = global.Promise;
 if(process.env.NODE_ENV == undefined){
@@ -17,12 +15,20 @@ if(process.env.NODE_ENV == undefined){
 }
 
 app.use(bodyParser.json());
-app.use(expressValidator());
-app.use(session({secret: process.env.SECRET_KEY, resave:false, saveUninitialized:true}));
-routes(app);
 
+user_route(app);
+event_route(app);
+comment_route(app);
+
+//error handler
 app.use((err, req, res, next) => {
-    res.status(422).send({ error: err.message });
+    if(err.name === 'MongoError') {
+        return res.status(422).json( { error: err.message} );
+    }
+    if(err.name === 'ValidationError'){
+        return res.status(422).json( { error: err.message} );
+    }
+    return res.status(422).json( err );
 });
 
 app.listen(3000, () => {

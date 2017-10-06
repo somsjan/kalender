@@ -1,33 +1,36 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const CommentSchema = require('./comment');
+const AttendingSchema = require('./attending');
+
 const EventSchema = new Schema({
     title: {
         type: String,
         required: true
     },
+    description: {
+        type: String
+    },
     date: {
-        type: Date,
-        default: Date.now()
+        type: Date
     },
     time: {
-        type: String,
-        length: 5,
-        required: false
+        type: String
     },
     location: {
-        name: {
-            type: String,
-            required: false
-        },
-        coordinates: {
-            lat: Number ,
-            lng: Number
-        }
-    }
+        type: String,
+    },
+    coordinatesLocation: {
+        lat: Number ,
+        lng: Number
+    },
+    comments: [CommentSchema],
+    attendingUsers: [AttendingSchema]
 });
 
 module.exports = EventSchema;
+
 
 
 // attendingUsers: []

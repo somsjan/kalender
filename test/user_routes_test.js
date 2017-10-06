@@ -1,165 +1,274 @@
 const assert = require('assert');
 const request = require('supertest');
 const mongoose = require('mongoose');
+const {ObjectId} = require('mongodb');
 const Schema = mongoose.Schema;
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
 const User = require('./../models/user');
 
 const app = require('../app');
 
-describe('GET /api/user', () => {
-    it('should return list of users', (done) => {
-        request(app)
-            .get('/api/user')
-            .end((err, res) => {
-                assert(res.body[0]);
-                done();
-            });
-    });
+
+beforeEach(() => {
+    templateUser = JSON.parse(JSON.stringify( require('./templates/test_templates').templateUser));
 });
 
-describe('GET /api/user/:ID', () => {
-    xit('should return an existing user', (done) => {
-        const testUser = new User({email: "test@test.nl", password: "wachtwoord"});
-        testUser.save().then(() => {
+describe('USER route tests', () => {
+    describe('GET /api/user', () => {
+        it('should return list of users', (done) => {
+            const testUser = new User (templateUser);
+            testUser.email = 'anderemail@email.nl';
+            testUser.save().then(() => {
+                request(app)
+                    .get('/api/user')
+                    .end((err, res) => {
+                        assert(res.body[0]);
+                        done();
+                    })
+            })
+        });
+    });
+
+    describe('GET /api/user/me', () => {
+        it('should return logged-in user', (done) => {
+            const testUser = new User (templateUser);
+            testUser.save().then(() => {
+                request(app)
+                    .get('/api/user/me')
+                    .set('x-auth', testUser.tokens[0].token)
+                    .end((err, res) => {
+                        assert(res.body._id == testUser._id);
+                        assert(res.body.email === testUser.email);
+                        done();
+                    });
+            });
+        });
+        it('should NOT return a user', (done) => {
             request(app)
-                .get('/api/user/' + testUser._id)
+                .get('/api/user/me')
                 .end((err, res) => {
-                    assert(res.body._id == testUser._id);
-                    assert(res.body.email === testUser.email);
+                    assert(res.status === 401);
+                    assert(res.error);
                     done();
                 });
         });
     });
-    xit('should NOT return a user', (done) => {
-        request(app)
-            .get('/api/user/' + 1122)
-            .end((err, res) => {
-                assert(res.body.error);
-                done();
+
+    describe('POST /api/login, login a user', () => {
+        it('should login user', (done) => {
+            const testUser = new User (templateUser);
+
+            testUser.save().then(() => {
+                request(app)
+                    .post('/api/login')
+                    .send({
+                        email: "test@test.nl",
+                        password: "tester"
+                    })
+                    .end((err, res) => {
+                        assert(res.status == 200);
+                        assert(res.body.email === "test@test.nl");
+                        done();
+                    });
             });
-    });
-});
-
-describe('POST /api/login, login a user', () => {
-    it('should login user', (done) => {
-        const testUser = new User({
-            email: "test@test.nl",
-            password: "$2a$10$F8Ukp2dwzJKvXwWa0CLRp.1kn4x/cy4Rrwo2RxTp94A4j8eyL1HFa"
         });
-        //password === "tester"
 
-        testUser.save().then(() => {
+        it('should deny faulty login info', (done) => {
+            const testUser = new User (templateUser);
+
+            testUser.save().then(() => {
+                request(app)
+                    .post('/api/login')
+                    .send({
+                        email: "test@test.nl",
+                        password: "wrongPassword"
+                    })
+                    .end((err, res) => {
+                        assert(res.status == 401);
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe('DELETE /api/logout, logout user', () => {
+        it('should logout user and remove token', (done) => {
+            const testUser = new User (templateUser);
+            testUser.save().then(() => {
+                request(app)
+                    .delete('/api/logout')
+                    .set('x-auth', testUser.tokens[0].token)
+                    .end((err, res) => {
+                        assert(res.body.message === 'logged out');
+                        done();
+                    });
+            });
+
+        });
+
+    });
+
+    describe('POST /api/register, register a new user', () => {
+        it('should register a new user', (done) => {
+            const testUser = new User (templateUser);
             request(app)
-                .post('/api/login')
-                .send({
-                    email: "test@test.nl",
-                    password: "tester"
-                })
+                .post('/api/register')
+                .send( testUser )
                 .end((err, res) => {
-                    assert(res.status == 200);
-                    assert(res.body.email === "test@test.nl");
+                    User.findById(testUser._id)
+                        .then((user) => done());
+                });
+        });
+        it('should deny duplicate email adresses', (done) => {
+            const testUser = new User (templateUser);
+            testUser.email = 'test01@test.nl';
+
+            request(app)
+                .post('/api/register')
+                .send( testUser )
+                .end((err, res) => {
+                    assert(res.status === 422);
+                    assert(res.body.error);
+                    done();
+                });
+        });
+        it('should deny faulty email', (done) => {
+            const testUser = new User (templateUser);
+            testUser.email = '1313';
+
+            request(app)
+                .post('/api/register')
+                .send( testUser )
+                .end((err, res) => {
+                    assert(res.status === 422);
+                    assert(res.error);
+                    done();
+                });
+        });
+        it('deny missing email', (done) => {
+            const testUser = new User (templateUser);
+            testUser.email = undefined;
+
+            request(app)
+                .post('/api/register')
+                .send( testUser )
+                .end((err, res) => {
+                    assert(res.status === 422);
+                    assert(res.error);
+                    done();
+                });
+        });
+        it('deny missing password', (done) => {
+            const testUser = new User (templateUser);
+            testUser.password = undefined;
+            request(app)
+                .post('/api/register')
+                .send( testUser )
+                .end((err, res) => {
+                    assert(res.status === 422);
+                    assert(res.error);
                     done();
                 });
         });
     });
-});
 
-describe('POST /api/register, register a new user', () => {
-    it('should register a new user', (done) => {
-        const testUser = new User({email: "test@gmail.com", password: "jezus"});
-        request(app)
-            .post('/api/register')
-            .send( testUser )
-            .end((err, res) => {
-                User.findById(testUser._id)
-                    .then((user) => done());
+    describe('PUT /api/user/update', () => {
+        it('should update users email', (done) => {
+            const testUser = new User (templateUser);
+            testUser.save().then(() => {
+                request(app)
+                    .put('/api/user/update')
+                    .set('x-auth', testUser.tokens[0].token)
+                    .send( {email: "new@email.com"} )
+                    .end((err, res) => {
+                        User.findById(testUser._id)
+                            .then((user) => {
+                                assert(user.email === 'new@email.com');
+                                done();
+                            });
+                    });
             });
-    });
-    it('deny duplicate email adresses', (done) => {
-        const testUser = new User({email: "test01@test.nl", password: "jezus"});
-        request(app)
-            .post('/api/register')
-            .send( testUser )
-            .end((err, res) => {
-                assert(res.status === 422);
-                assert(res.error);
-                done();
-            });
-    });
-    it('deny faulty email', (done) => {
-        const testUser = new User({email: "1212", password: "jezus"});
-        request(app)
-            .post('/api/register')
-            .send( testUser )
-            .end((err, res) => {
-                assert(res.status === 422);
-                assert(res.error);
-                done();
-            });
-    });
-    it('deny missing email', (done) => {
-        const testUser = new User({email: undefined, password: "jezus"});
-        request(app)
-            .post('/api/register')
-            .send( testUser )
-            .end((err, res) => {
-                assert(res.status === 422);
-                assert(res.error);
-                done();
-            });
-    });
-    it('deny missing password', (done) => {
-        const testUser = new User({email: "email@test.nl", password: undefined});
-        request(app)
-            .post('/api/register')
-            .send( testUser )
-            .end((err, res) => {
-                assert(res.status === 422);
-                assert(res.error);
-                done();
-            });
-    });
-});
-
-describe('PUT /api/user/ID', () => {
-    it('should update user info', (done) => {
-        const oldUserInfo = new User({email: 'old@email.com', password: 'oldPassword'});
-        oldUserInfo.save().then(() => {
-            request(app)
-                .put('/api/user/' + oldUserInfo._id)
-                .send( {email: 'new@email.com', password: 'newPassword'} )
-                .end((err, res) => {
-                    User.findById(oldUserInfo._id)
-                        .then((user) => {
-                            assert(user.email === 'new@email.com');
-                            assert(user.password === 'newPassword');
+        });
+        it('should update and hash users password', (done) => {
+            const testUser = new User (templateUser);
+            testUser.save().then(() => {
+                request(app)
+                    .put('/api/user/update')
+                    .set('x-auth', testUser.tokens[0].token)
+                    .send( {password: "ietsAnders"} )
+                    .end((err, res) => {
+                        bcrypt.compare('ietsAnders', res.body.password, (err, result) => {
+                            assert(result);
                             done();
                         });
-                });
-        }).catch((e) => console.log(e));
-    });
-});
+                    });
+            });
+        });
+        it('should update email and password', (done) => {
+            const testUser = new User (templateUser);
+            const newInfo = {
+                email: 'ander@email.com',
+                password: 'ietsAnders'
+            }
+            testUser.save().then(() => {
+                request(app)
+                    .put('/api/user/update')
+                    .set('x-auth', testUser.tokens[0].token)
+                    .send( newInfo )
+                    .end((err, res) => {
+                        bcrypt.compare( newInfo.password, res.body.password, (err, result) => {
+                            assert(result);
+                            assert(res.body.email === newInfo.email);
+                            done();
+                        });
+                    });
+            });
+        });
 
-describe('DELETE /api/user/:ID', () => {
-    it('should delete a user from the DB', (done) => {
-        const deleteUser = new User({email: 'delete@email.com', password: 'delete'});
-        deleteUser.save().then(() => {
+        it('should deny update if not logged in', (done) => {
+            const testUser = new User (templateUser);
+            testUser.save().then(() => {
+                request(app)
+                    .put('/api/user/update')
+                    // .set('x-auth', testUser.tokens[0].token)
+                    .send( {email: "new@email.com"} )
+                    .end((err, res) => {
+                        assert(res.error);
+                        assert(res.status == 401);
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe('DELETE /api/user/delete', () => {
+        it('should delete a user from the DB', (done) => {
+            const testUser = new User (templateUser);
+            testUser.save().then(() => {
+                request(app)
+                    .delete('/api/user/delete')
+                    .set('x-auth', testUser.tokens[0].token)
+                    .end((err, res) => {
+                        User.findById(testUser._id)
+                            .then((deletedUser) => {
+                                assert(!deletedUser);
+                                assert(res.status === 200);
+                                done();
+                            });
+                    });
+            });
+        });
+        it('should NOT find and delete a user from the DB', (done) => {
             request(app)
-                .delete('/api/user/' + deleteUser._id)
+                .delete('/api/user/delete')
+                // .set('x-auth', null)
                 .end((err, res) => {
-                    assert(res.status === 200);
-                    assert(!res.error);
+                    assert(res.status === 401);
+                    assert(res.error);
                     done();
                 });
         });
-    });
-    it('should NOT find and delete a user from the DB', (done) => {
-        request(app)
-            .delete('/api/user/' + 020202)
-            .end((err, res) => {
-                assert(res.status === 422);
-                assert(res.error);
-                done();
-            });
     });
 });

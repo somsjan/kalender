@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const validator = require('validator');
+const jwt = require('jsonwebtoken')
 
 const EventSchema = require('./event');
 
@@ -7,14 +9,62 @@ const UserSchema = new Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true,
+        lowercase: true,
+        validate: {
+            isAsync: true,
+            validator: validator.isEmail,
+            message: '{VALUE} is not a valid email'
+        }
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        minlength: 6
     },
+    tokens: [{
+        access: {
+            type: String,
+            required: true
+        },
+        token: {
+            type: String,
+            required: true
+        }
+    }],
     events: [EventSchema]
 });
+
+UserSchema.methods.generateAuthToken = function () {
+    const user = this;
+    const access = 'auth';
+    const token = jwt.sign({_id: user._id.toHexString(), access}, 'abc123').toString();
+
+    user.tokens.push({access, token});
+
+    return user.save().then(() => {
+        return token;
+    });
+};
+
+UserSchema.statics.findByToken = function (token) {
+    const User = this;
+    let decoded;
+
+    try {
+        decoded = jwt.verify(token, 'abc123');
+    } catch(e) {
+        return Promise.reject(e);
+    }
+
+    return User.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    });
+};
+
 
 const User = mongoose.model('user', UserSchema);
 
