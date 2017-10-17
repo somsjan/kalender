@@ -1,9 +1,14 @@
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const validator = require('validator');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 const EventSchema = require('./event');
+
+const token_key = process.env.TOKEN_KEY;
+
 
 const UserSchema = new Schema({
     email: {
@@ -24,6 +29,7 @@ const UserSchema = new Schema({
         minlength: 6
     },
     tokens: [{
+        _id: false,
         access: {
             type: String,
             required: true
@@ -39,7 +45,7 @@ const UserSchema = new Schema({
 UserSchema.methods.generateAuthToken = function () {
     const user = this;
     const access = 'auth';
-    const token = jwt.sign({_id: user._id.toHexString(), access}, 'abc123').toString();
+    const token = jwt.sign({_id: user._id.toHexString(), access}, token_key).toString();
 
     user.tokens.push({access, token});
 
@@ -53,7 +59,7 @@ UserSchema.statics.findByToken = function (token) {
     let decoded;
 
     try {
-        decoded = jwt.verify(token, 'abc123');
+        decoded = jwt.verify(token, token_key);
     } catch(e) {
         return Promise.reject(e);
     }

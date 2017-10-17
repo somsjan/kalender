@@ -7,14 +7,13 @@ const jwt = require('jsonwebtoken');
 
 const User = require('./../models/user');
 
-const app = require('../app');
+// load templates
+const templateUser = require('./helpers/test_templates').templateUser;
+const templateEvent = require('./helpers/test_templates').templateEvent;
+const templateComment = require('./helpers/test_templates').templateComment;
+const templateComment2 = require('./helpers/test_templates').templateComment2;
 
-beforeEach(() => {
-    templateUser = JSON.parse(JSON.stringify( require('./templates/test_templates').templateUser));
-    templateEvent = JSON.parse(JSON.stringify( require('./templates/test_templates').templateEvent));
-    templateComment = JSON.parse(JSON.stringify( require('./templates/test_templates').templateComment));
-    templateComment2 = JSON.parse(JSON.stringify( require('./templates/test_templates').templateComment2));
-});
+const app = require('../app');
 
 
 describe('COMMENT route tests', () => {

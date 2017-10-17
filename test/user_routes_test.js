@@ -8,12 +8,11 @@ const bcrypt = require('bcryptjs');
 
 const User = require('./../models/user');
 
+//load template
+const templateUser = require('./helpers/test_templates').templateUser;
+
 const app = require('../app');
 
-
-beforeEach(() => {
-    templateUser = JSON.parse(JSON.stringify( require('./templates/test_templates').templateUser));
-});
 
 describe('USER route tests', () => {
     describe('GET /api/user', () => {
@@ -22,12 +21,12 @@ describe('USER route tests', () => {
             testUser.email = 'anderemail@email.nl';
             testUser.save().then(() => {
                 request(app)
-                    .get('/api/user')
+                    .get('/api/users/all')
                     .end((err, res) => {
                         assert(res.body[0]);
                         done();
-                    })
-            })
+                    });
+            });
         });
     });
 
@@ -51,6 +50,30 @@ describe('USER route tests', () => {
                 .end((err, res) => {
                     assert(res.status === 401);
                     assert(res.error);
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/user/:userID', () => {
+        it('should return logged-in user', (done) => {
+            const userID = '012345678910111213146666';
+            request(app)
+                .get('/api/user/' + userID)
+                .end((err, res) => {
+                    assert(res.body._id == userID);
+                    assert(!res.body.password);
+                    done();
+                });
+        });
+
+        it('should NOT find a user', (done) => {
+            //non existing user with userID
+            const userID = '012345678910111213142222';
+            request(app)
+                .get('/api/user/' + userID)
+                .end((err, res) => {
+                    assert(res.body.error === 'user not found');
                     done();
                 });
         });

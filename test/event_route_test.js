@@ -8,16 +8,16 @@ const dateTime = require('date-time');
 
 const User = require('./../models/user');
 
-const app = require('../app');
-
+const templateUser = require('./helpers/test_templates').templateUser;
 beforeEach(() => {
-    templateUser = JSON.parse(JSON.stringify( require('./templates/test_templates').templateUser));
-    templateEvent = JSON.parse(JSON.stringify( require('./templates/test_templates').templateEvent));
+    // load the template for Event and alter them so they don't change for tests
+    templateEvent = JSON.parse(JSON.stringify( require('./helpers/test_templates').templateEvent));
 });
+
+const app = require('../app');
 
 
 describe('EVENT route tests', () => {
-
     describe('GET /api/event', () => {
         it('should return a list of users with events', (done) => {
             request(app)
@@ -28,7 +28,6 @@ describe('EVENT route tests', () => {
                 });
         });
     });
-
     describe('GET /api/event/:eventID', () => {
         it('should return an event', (done) => {
             const eventID = '012345678910111213141516';
@@ -238,9 +237,47 @@ describe('EVENT route tests', () => {
                     });
             });
         });
+        it('should deny empty object', (done) => {
+            const testUser = new User (templateUser);
+            testEvent = templateEvent;
+            testUser.events = testEvent;
+            const updateObject = undefined;
+
+            testUser.save().then(() => {
+                request(app)
+                    .put('/api/event/update/' + testEvent._id)
+                    .set('x-auth', testUser.tokens[0].token)
+                    .send(updateObject)
+                    .end((err, res) => {
+                        assert(res.body.error === 'nothing to update');
+                        done();
+                    });
+            });
+        });
+        it('should deny old date', (done) => {
+            const testUser = new User (templateUser);
+            testEvent = templateEvent;
+            testUser.events = testEvent;
+            const updateObject = {
+                date: '1999,09,24',
+                time: '14:45'
+            };
+
+            testUser.save().then(() => {
+                request(app)
+                    .put('/api/event/update/' + testEvent._id)
+                    .set('x-auth', testUser.tokens[0].token)
+                    .send(updateObject)
+                    .end((err, res) => {
+                        assert(res.body.error === 'date has already passed');
+                        done();
+                    });
+            });
+        });
+
     });
 
-    describe.only('PUT /api/event/attending/:eventID', () => {
+    describe('UPDATE /api/event/attendingAdd/:eventID', () => {
 
         it('should attend by putting userID in attendingUsers array', (done) => {
             const testUser = new User (templateUser);
@@ -248,16 +285,48 @@ describe('EVENT route tests', () => {
 
             testUser.save().then(() => {
                 request(app)
-                    .put('/api/event/attending/' + testEventID)
+                    .put('/api/event/attendingAdd/' + testEventID)
                     .set('x-auth', testUser.tokens[0].token)
                     .end((err, res) => {
                         assert(res.body.events[0]._id === testEventID);
-                        assert(res.body.events[0].attendingUsers[0].userID == testUser._id);
+                        assert(res.body.events[0].attendingUsers[2].userID == testUser._id);
+                        assert(res.body.events[0].attendingUsers.length === 3);
+                        done();
+                    });
+            });
+        });
+        it('should not find non existing event', (done) => {
+            const testUser = new User (templateUser);
+            const testEventID = '012345678910111213140000';
+
+            testUser.save().then(() => {
+                request(app)
+                    .put('/api/event/attendingAdd/' + testEventID)
+                    .set('x-auth', testUser.tokens[0].token)
+                    .end((err, res) => {
+                        assert(res.body.error === 'event not found');
+                        done();
+                    });
+            });
+        });
+        it('remove if already attending', (done) => {
+            const testUser = new User (templateUser);
+            testUser._id = new ObjectId('000345678910111213146666');
+            testUser.tokens[0].token = jwt.sign({_id: testUser._id, access: 'auth'}, process.env.TOKEN_KEY).toString()
+            const testEventID = '012345678910111213141516';
+
+            testUser.save().then(() => {
+                request(app)
+                    .put('/api/event/attendingAdd/' + testEventID)
+                    .set('x-auth', testUser.tokens[0].token)
+                    .end((err, res) => {
+                        assert(res.body.events[0]._id === testEventID);
                         assert(res.body.events[0].attendingUsers.length === 1);
                         done();
                     });
             });
         });
+
     });
 
 });

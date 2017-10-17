@@ -1,5 +1,8 @@
+
 const jwt = require('jsonwebtoken');
 const {ObjectId} = require('mongodb');
+
+const token_key = process.env.TOKEN_KEY;
 
 const testUserId = new ObjectId();
 
@@ -9,7 +12,7 @@ const templateUser = {
     password: "$2a$10$F8Ukp2dwzJKvXwWa0CLRp.1kn4x/cy4Rrwo2RxTp94A4j8eyL1HFa",
     tokens: [{
         access: 'auth',
-        token: jwt.sign({_id: testUserId, access: 'auth'}, 'abc123').toString()
+        token: jwt.sign({_id: testUserId, access: 'auth'}, token_key).toString()
     }]
 };
 

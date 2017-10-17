@@ -28,6 +28,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.17.2",
     "date-time": "^2.1.0",
+    "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "jsonwebtoken": "^7.4.3",
     "latest-version": "^3.1.0",

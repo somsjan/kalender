@@ -3,7 +3,7 @@ const {ObjectId} = require('mongodb');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 
-const User = require('./../models/user');
+const User = require('./../../models/user');
 
 before((done) => {
     mongoose.connect('mongodb://localhost/kalender_test');
@@ -18,7 +18,7 @@ before((done) => {
 });
 
 beforeEach((done) => {
-
+    //testUser01 is saved before each test
     const testUser01 = new User({
         _id: new ObjectId('012345678910111213146666'),
         email: "test01@test.nl",
@@ -29,6 +29,13 @@ beforeEach((done) => {
             description: 'First test helper description',
             date: '2020-03-12T14:45',
             location: "Vlaanderen",
+            attendingUsers: [
+                {
+                    userID: '000345678910111213146666'
+                },{
+                    userID: '000345678910111213142222'
+                }
+            ],
             coordinatesLocation: {
                     lat: 1234,
                     lng: 4321
