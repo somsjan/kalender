@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const User = require('./../models/user');
+const User = require('./../app/models/user');
 
 //load template
 const templateUser = require('./helpers/test_templates').templateUser;

@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const jwt = require('jsonwebtoken');
 const dateTime = require('date-time');
 
-const User = require('./../models/user');
+const User = require('./../app/models/user');
 
 const templateUser = require('./helpers/test_templates').templateUser;
 beforeEach(() => {

@@ -40,13 +40,14 @@ module.exports = (app) => {
                 if(result) {
                     user.generateAuthToken().then((token) => {
                         userObj = _.pick(user, ['email', '_id', 'events']);
-                        res.header('x-auth', token).json(userObj);
+                        process.env.USER_TOKEN = token;
+                        return res.header('x-auth', token).json(userObj);
                     });
                 }
-                else if(!result) res.status(401).json({ message: 'password is incorrect'});
+                else if(!result) res.status(401).json({ error: 'password is incorrect'});
                 else if (err)    next(err);
             });
-        }).catch((e) => res.status(401).json({ message: `No user was found with email: ${req.body.email}`} ));
+        }).catch((e) => res.status(401).json({ error: `No user was found with email: ${req.body.email}`} ));
     });
 
     // logout user, remove token

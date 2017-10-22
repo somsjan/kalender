@@ -5,7 +5,7 @@ const {ObjectId} = require('mongodb');
 const Schema = mongoose.Schema;
 const jwt = require('jsonwebtoken');
 
-const User = require('./../models/user');
+const User = require('./../app/models/user');
 
 // load templates
 const templateUser = require('./helpers/test_templates').templateUser;

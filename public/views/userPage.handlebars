@@ -1,0 +1,34 @@
+
+<div class="col-md-12">
+    <h2> {{{ bodyTitle }}} </h2>
+    <p> {{{bodyText}}} </p> <br>
+
+    <ul class="list-group">
+
+        <li class="list-group-item">
+            <b> Email: </b> {{user.email}} <br>
+            <b> _id: </b> {{user._id}} <br>
+            <b> Events: </b>
+                {{#each this.events}}
+                    <li class="list-group-item">
+                        <b> Eventname: </b> {{this.title}} <br>
+                        <b> Attending event: </b>
+                        <ul>
+                            {{#each this.attendingUsers}}
+                                <li> userID: {{this.userID}} </li>
+                            {{else}}
+                                <li> No users attending this event </li>
+                            {{/each}}
+                        </ul>
+                    </li>
+                {{else}}
+                    User has no events
+                {{/each}}  <br>
+                <br>
+
+            </li>
+
+
+    </ul>
+
+</div>

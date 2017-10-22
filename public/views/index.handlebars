@@ -1,0 +1,55 @@
+
+<div class="col-md-12">
+    <h2> {{{ bodyTitle }}} </h2>
+    <p> {{{ bodyText }}} </p> <br>
+
+    <ul class="list-group">
+        <div class="row">
+
+            {{#if loggedIn}}
+                Welcome {{loggedIn.email}}!
+            {{else}}
+                <div class="col-md-6">
+                    <h3> Login </h3> <br>
+                    <form method="POST" action="/login">
+                        <div class="form-group">
+                          <label for="email">Email address</label>
+                          <input name="email" type="email" class="form-control"placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                          <label for="password">Password</label>
+                          <input name="password" type="password" class="form-control"placeholder="Password">
+                        </div>
+                        <div class="form-group">
+                          <button type="submit" class="btn btn-default">Login</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-6">
+                    <h3> Register </h3> <br>
+                    <form method="POST" action="/register">
+                      <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input name='email' type="email" class="form-control" placeholder="Email">
+                      </div>
+                      <div class="form-group">
+                        <label for="password">Password</label>
+                        <input name='password' type="password" class="form-control" placeholder="Password">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Password check</label>
+                        <input name='password2' type="password" class="form-control" placeholder="Password">
+                      </div>
+                      <button type="submit" class="btn btn-default">Register</button>
+                    </form>
+                </div>
+            {{/if}}
+
+
+        </div>
+
+
+    </ul>
+
+</div>
