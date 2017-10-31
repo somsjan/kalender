@@ -22,12 +22,16 @@ app.set('views', path.join(__dirname, 'public/views'));
 app.engine('handlebars', hbs({defaultLayout: 'main', layoutsDir: 'public/views/layouts/'}));
 app.set('view engine', 'handlebars');
 
-console.log('process.env: ', process.env);
 
 mongoose.Promise = global.Promise;
 if(process.env.NODE_ENV == undefined){
-    console.log('running NORMAL DB');
-    mongoose.connect('mongodb://localhost/kalender');
+    if(process.env.PORT === 3000) {
+        console.log('running LOCAL DB');
+        mongoose.connect('mongodb://localhost/kalender');
+    } else {
+        console.log('running PUBLIC DB');
+        mongoose.connect('mongodb://admin:123@ds141401.mlab.com:41065/kalender-app');
+    }
 };
 
 // parse application/x-www-form-urlencoded
