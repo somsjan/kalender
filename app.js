@@ -36,7 +36,7 @@ if(process.env.NODE_ENV == undefined){
     // } else {
     //     console.log('running PUBLIC DB');
     //     mongoose.connect('mongodb://admin:123@ds141401.mlab.com:41065/kalender-app');
-    // }
+    }
 };
 
 if(process.env.NODE_ENV == 'public'){
