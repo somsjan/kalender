@@ -72,7 +72,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => {
-    console.log('server started on port: 3000');
+    console.log(`server started on port: ${port}`);
 });
 
 module.exports = app;
