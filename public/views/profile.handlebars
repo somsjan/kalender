@@ -1,0 +1,78 @@
+
+<div class="col-md-12">
+    <h2> {{{ bodyTitle }}} </h2>
+    <p> {{{bodyText}}} </p> <br>
+
+    <ul class="list-group">
+
+        <li class="list-group-item">
+            <b> Email: </b> {{user.email}} <br>
+            <b> _id: </b> {{user._id}} <br>
+            <b> Events: </b>
+                {{#each user.events}}
+                    <li class="list-group-item">
+                        <b> Eventname: </b> {{this.title}} <br>
+                        <b> Comments: </b> {{this.comments.length}} <br>
+                        <b> Attending event: </b>
+                        <ul>
+                            {{#each this.attendingUsers}}
+                                <li> <b> userID: </b> <a href="/user/{{this.userID}}"> {{this.userID}} </a>  <br> </li>
+                            {{else}}
+                                <li> No users attending this event </li>
+                            {{/each}}
+                        </ul>
+                        <br>
+                        <p>
+                            <a class="btn btn-primary" href="/event/{{this._id}}" role="button">View event &raquo;</a>
+                            <a class="btn btn-danger" href="/event/delete/{{this._id}}" role="button">Delete event &raquo;</a>
+                        </p>
+                    </li>
+                {{else}}
+                    User has no events
+                {{/each}}
+                <br> <br>
+            </li>
+        </ul>
+
+        <ul class="list-group">
+            <li class="list-group-item">
+                <b> Make a new event: </b> <br> <br>
+                <form class="form-horizontal" method="POST" action="/newEvent">
+                    <div class="form-group">
+                      <label for="title" class="col-sm-2 control-label">Title</label>
+                      <div class="col-sm-10">
+                          <input name="title" type="text" class="form-control" placeholder="Title">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="time" class="col-sm-2 control-label">Time</label>
+                      <div class="col-sm-10">
+                          <input name="time" type="time" class="form-control"placeholder="Time">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="date" class="col-sm-2 control-label">Date</label>
+                      <div class="col-sm-10">
+                          <input name="date" type="date" class="form-control"placeholder="date">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="location" class="col-sm-2 control-label">Location</label>
+                      <div class="col-sm-10">
+                          <input name="location" type="text" class="form-control"placeholder="Location">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-default">Submit</button>
+                        </div>
+                    </div>
+                </form>
+
+            </li>
+        </ul>
+
+        <br>
+        <p><a class="btn btn-danger" href="/deleteUser" role="button">Delete account</a></p>
+
+</div>

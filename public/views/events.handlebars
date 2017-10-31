@@ -10,10 +10,11 @@
                 <li class="list-group-item">
                     <b> Event title: </b> {{this.title}} <br>
                     <b> Event ID: </b> {{this._id}} <br>
+                    <b> Comments: </b> {{this.comments.length}} <br>
                     <b> Attending users: </b> <br>
                     <ul>
                         {{#each this.attendingUsers}}
-                            <li> <b> userID: </b> {{this.userID}} </li>
+                            <li><b> userID: </b> <a href="/user/{{this.userID}}"> {{this.userID}} </a> </li>
                         {{else}}
                             <li> No users attending this event </li>
                         {{/each}}

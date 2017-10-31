@@ -12,10 +12,11 @@
                 {{#each this.events}}
                     <li class="list-group-item">
                         <b> Eventname: </b> {{this.title}} <br>
+                        <b> Comments: </b> {{this.comments.length}} <br>
                         <b> Attending event: </b>
                         <ul>
                             {{#each this.attendingUsers}}
-                                <li> userID: {{this.userID}} </li>
+                                <li> <b> userID: </b> {{this.userID}} </li>
                             {{else}}
                                 <li> No users attending this event </li>
                             {{/each}}
@@ -27,8 +28,5 @@
                 <br>
 
             </li>
-
-
     </ul>
-
 </div>

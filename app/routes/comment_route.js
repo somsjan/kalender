@@ -30,7 +30,7 @@ module.exports = (app) => {
                         updatedEvent = userWithEvent.events[i];
                         userWithEvent.save().then(() => {
                             return res.json(updatedEvent);
-                        });
+                        }).catch(next);
                     }
                 }
             }).catch((e) => {

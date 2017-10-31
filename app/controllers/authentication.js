@@ -2,7 +2,7 @@ const User = require('./../models/user');
 const _ = require('lodash');
 
 module.exports = function isAuthenticated(req, res, next) {
-    const token =  req.body.token || req.header('x-auth');
+    const token =  req.body.token || req.header('x-auth' );
 
     User.findByToken(token).then((user) => {
         if(!user){
@@ -17,6 +17,6 @@ module.exports = function isAuthenticated(req, res, next) {
         next();
     }).catch((error) => {
         // console.log(error.message);
-        res.status(401).json({error: 'you need to be logged in to continue'});
+        res.status(401).json({error: 'you need to be logged in to do this'});
     });
 };

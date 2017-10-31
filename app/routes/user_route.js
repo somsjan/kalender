@@ -63,6 +63,9 @@ module.exports = (app) => {
     app.post('/api/register', (req, res, next) => {
         bcrypt.genSalt(10, function(err, salt) {
             bcrypt.hash(req.body.password, salt, function(err, hash) {
+                if(!req.body.password === req.body.password2) {
+                    return next({error: 'passwords are not the same'});
+                }
                 req.body.password = hash;
                 const pickBody = _.pick(req.body, ['email', '_id', 'password']);
                 const newUser = new User(pickBody);
@@ -81,7 +84,7 @@ module.exports = (app) => {
     app.delete('/api/user/delete', authenticate, (req, res, next) => {
         User.findByIdAndRemove(req.user._id, {new: false})
             .then((removedUser) => {
-                res.json(_.pick(removedUser, ['_id', 'email', 'events']));
+                return res.json(_.pick(removedUser, ['_id', 'email', 'events']));
             }).catch(next);
     });
 

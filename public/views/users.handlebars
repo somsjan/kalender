@@ -8,21 +8,8 @@
             <li class="list-group-item">
                 <b> Email: </b> {{this.email}} <br>
                 <b> _id: </b> {{this._id}} <br>
-                    {{#each this.events}}
-                    <li class="list-group-item">
-                        <b> Eventname: </b> {{this.title}} <br>
-                        <b> Attending event: </b>
-                        <ul>
-                            {{#each this.attendingUsers}}
-                                <li> userID: {{this.userID}} </li>
-                            {{else}}
-                                <li> No users attending this event </li>
-                            {{/each}}
-                        </ul>
-
-                    </li>
-                    {{/each}}
-                    <p><a class="btn btn-secondary" href="/user/{{this._id}}" role="button">View user &raquo;</a></p>
+                <b> Made events: </b> {{this.events.length}} <br>
+                <p><a class="btn btn-secondary" href="/user/{{this._id}}" role="button">View user &raquo;</a></p>
             </li>
 
         {{else}}
