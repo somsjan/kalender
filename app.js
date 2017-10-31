@@ -22,6 +22,8 @@ app.set('views', path.join(__dirname, 'public/views'));
 app.engine('handlebars', hbs({defaultLayout: 'main', layoutsDir: 'public/views/layouts/'}));
 app.set('view engine', 'handlebars');
 
+console.log('process.env: ', process.env);
+
 mongoose.Promise = global.Promise;
 if(process.env.NODE_ENV == undefined){
     console.log('running NORMAL DB');
