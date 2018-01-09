@@ -48,7 +48,7 @@ module.exports = (app) => {
                 loggedIn,
                 title: `Userpage: ${data.email}`,
                 headerTitle: `Userpage: ${data.email}`,
-                headerText: `Header text with userID: ${data._id}`,
+                headerText: `UserID: ${data._id}`,
                 bodyTitle: 'Body title',
                 bodyText: 'Body TEXTXTXT',
                 user: data
@@ -84,7 +84,7 @@ module.exports = (app) => {
                 loggedIn,
                 title: `Userpage: ${data.email}`,
                 headerTitle: `Userpage: ${data.email}`,
-                headerText: `Header text with userID: ${data._id}`,
+                headerText: `HUserID: ${data._id}`,
                 bodyTitle: 'Body title',
                 bodyText: 'Body TEXTXTXT',
                 user: data
@@ -220,6 +220,7 @@ module.exports = (app) => {
         const formData = {
             token: process.env.USER_TOKEN,
             title: req.body.title,
+            description: req.body.description,
             time: req.body.time,
             date: req.body.date,
             location: req.body.location

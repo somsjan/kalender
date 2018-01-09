@@ -40,6 +40,8 @@ const UserSchema = new Schema({
         }
     }],
     events: [EventSchema]
+},{
+  usePushEach: true
 });
 
 UserSchema.methods.generateAuthToken = function () {

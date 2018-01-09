@@ -30,13 +30,13 @@ if(process.env.NODE_ENV == undefined){
     // const db = 'mongodb://localhost/kalender' || 'mongodb://admin:123@ds141401.mlab.com:41065/kalender-app';
     // mongoose.connect('mongodb://admin:123@ds141401.mlab.com:41065/kalender-app');
     // mongoose.connect( db );
-    if(process.env.PORT === 3000) {
+    // if(process.env.PORT === 3000) {
     console.log('running LOCAL DB');
     mongoose.connect('mongodb://localhost/kalender');
     // } else {
     //     console.log('running PUBLIC DB');
     //     mongoose.connect('mongodb://admin:123@ds141401.mlab.com:41065/kalender-app');
-    }
+    // }
 };
 
 if(process.env.NODE_ENV == 'public'){

@@ -12,6 +12,7 @@
                 {{#each user.events}}
                     <li class="list-group-item">
                         <b> Eventname: </b> {{this.title}} <br>
+                        <b> Description: </b> {{this.description}} <br>
                         <b> Comments: </b> {{this.comments.length}} <br>
                         <b> Attending event: </b>
                         <ul>
@@ -41,7 +42,13 @@
                     <div class="form-group">
                       <label for="title" class="col-sm-2 control-label">Title</label>
                       <div class="col-sm-10">
-                          <input name="title" type="text" class="form-control" placeholder="Title">
+                        <input name="title" type="text" class="form-control" placeholder="Title">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="description" class="col-sm-2 control-label">Description</label>
+                      <div class="col-sm-10">
+                       <textarea name="description" class="form-control" rows="4"></textarea>
                       </div>
                     </div>
                     <div class="form-group">
@@ -64,7 +71,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-10">
-                            <button type="submit" class="btn btn-default">Submit</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </div>
                 </form>
