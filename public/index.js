@@ -22,9 +22,7 @@ module.exports = (app) => {
             loggedIn: loggedIn,
             title: 'Kalender-web frontpage',
             headerTitle: 'Frontpage',
-            headerText: 'Welcome text',
-            bodyTitle: 'Body title',
-            bodyText: 'Body TEXTXTXT',
+            headerText: 'Welcome text'
         });
     });
 
@@ -49,8 +47,6 @@ module.exports = (app) => {
                 title: `Userpage: ${data.email}`,
                 headerTitle: `Userpage: ${data.email}`,
                 headerText: `UserID: ${data._id}`,
-                bodyTitle: 'Body title',
-                bodyText: 'Body TEXTXTXT',
                 user: data
             });
         });
@@ -85,8 +81,6 @@ module.exports = (app) => {
                 title: `Userpage: ${data.email}`,
                 headerTitle: `Userpage: ${data.email}`,
                 headerText: `HUserID: ${data._id}`,
-                bodyTitle: 'Body title',
-                bodyText: 'Body TEXTXTXT',
                 user: data
             });
         });
@@ -107,8 +101,6 @@ module.exports = (app) => {
                 title: 'Kalender-web Users',
                 headerTitle: 'Users',
                 headerText: 'List of users',
-                bodyTitle: 'Body title',
-                bodyText: 'Body TEXTXTXT',
                 users: data
             });
         });
@@ -180,8 +172,6 @@ module.exports = (app) => {
                 title: 'Kalender-web Events',
                 headerTitle: 'Events',
                 headerText: 'List of events',
-                bodyTitle: 'Body title',
-                bodyText: 'Body TEXTXTXT',
                 events: data
             });
         });
@@ -208,8 +198,6 @@ module.exports = (app) => {
                 title: `Eventpage: ${data.title}`,
                 headerTitle: `Eventpage: ${data.title}`,
                 headerText: `Header text with eventID: ${data._id}`,
-                bodyTitle: 'Body title',
-                bodyText: 'Body TEXTXTXT',
                 data
             });
         });

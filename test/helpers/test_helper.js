@@ -10,7 +10,7 @@ before((done) => {
     mongoose.connection
         .once('open', () => {
             console.log('Running test server');
-             done();
+            done();
          })
         .on('error', err => {
             console.warn('Warning', err);

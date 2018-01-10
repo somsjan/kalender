@@ -23,26 +23,18 @@ app.set('views', path.join(__dirname, 'public/views'));
 app.engine('handlebars', hbs({defaultLayout: 'main', layoutsDir: 'public/views/layouts/'}));
 app.set('view engine', 'handlebars');
 
-
 mongoose.Promise = global.Promise;
 
-if(process.env.NODE_ENV == undefined){
-    // const db = 'mongodb://localhost/kalender' || 'mongodb://admin:123@ds141401.mlab.com:41065/kalender-app';
-    // mongoose.connect('mongodb://admin:123@ds141401.mlab.com:41065/kalender-app');
-    // mongoose.connect( db );
-    // if(process.env.PORT === 3000) {
-    console.log('running LOCAL DB');
-    mongoose.connect('mongodb://localhost/kalender');
-    // } else {
-    //     console.log('running PUBLIC DB');
-    //     mongoose.connect('mongodb://admin:123@ds141401.mlab.com:41065/kalender-app');
-    // }
+if(process.env.NODE_ENV === 'public'){
+  if(port === 3000){
+      console.log('running LOCAL DB');
+      mongoose.connect('mongodb://localhost/kalender');
+  } else {
+      console.log('running PUBLIC DB');
+      mongoose.connect('mongodb://admin:123@ds141401.mlab.com:41065/kalender-app');   mongoose.connect('mongodb://admin:123@ds141401.mlab.com:41065/kalender-app');
+  };
 };
 
-if(process.env.NODE_ENV == 'public'){
-    console.log('running PUBLIC DB');
-    mongoose.connect('mongodb://admin:123@ds141401.mlab.com:41065/kalender-app');
-}
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));

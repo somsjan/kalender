@@ -4,10 +4,11 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "set NODE_ENV=public && node app",
-    "test": "set NODE_ENV=test && mocha --recursive",
-    "test-watch": "set NODE_ENV=test && nodemon --exec mocha --recursive",
-    "test-watch-min": "set NODE_ENV=test && nodemon --exec mocha --recursive -R min"
+    "start": "NODE_ENV=public node app",
+    "production": "NODE_ENV=public nodemon app",
+    "test": "NODE_ENV=test mocha --recursive",
+    "test-watch": "NODE_ENV=test nodemon --exec mocha --recursive",
+    "test-watch-min": "NODE_ENV=test nodemon --exec mocha --recursive -R min"
   },
   "repository": {
     "type": "git",
