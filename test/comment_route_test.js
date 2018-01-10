@@ -169,7 +169,7 @@ describe('COMMENT route tests', () => {
             });
         });
 
-        it('should delete anything while user not logged in', (done) => {
+        it('should NOT delete anything while user not logged in', (done) => {
             const testUser = new User(templateUser);
             testUser.events = [templateEvent];
             testUser.events[0].comments[0] = templateComment;
@@ -182,7 +182,7 @@ describe('COMMENT route tests', () => {
                     .delete('/api/event/deleteComment/' + eventID + '/' + commentID)
                     // .set('x-auth', testUser.tokens[0].token)
                     .end((err, res) => {
-                        assert(res.body.error === 'you need to be logged in to continue');
+                        assert(res.body.error === 'you need to be logged in to do this');
                         done();
                     });
             });

@@ -77,7 +77,7 @@ describe('EVENT route tests', () => {
                     // .set('x-auth', 'undefined')
                     .send(testEvent)
                     .end((err, res) => {
-                        assert(res.body.error === 'you need to be logged in to continue');
+                        assert(res.body.error === 'you need to be logged in to do this');
                         assert(res.status === 401);
                         done();
                     });
@@ -181,7 +181,7 @@ describe('EVENT route tests', () => {
                     .delete('/api/event/delete/' + testEvent._id)
                     // .set('x-auth', testUser.tokens[0].token)
                     .end((err, res) => {
-                        assert(res.body.error === 'you need to be logged in to continue');
+                        assert(res.body.error === 'you need to be logged in to do this');
                         done();
                     });
             });

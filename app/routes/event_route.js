@@ -32,7 +32,7 @@ module.exports = (app) => {
     // Make a new event
     app.put('/api/event/add', authenticate, (req, res, next) => {
         if (!req.body.title || !req.body.time || !req.body.date || !req.body.location){
-            console.log(req.body);
+            // console.log(req.body);
             return next({error: 'missing event information'});
         };
 
